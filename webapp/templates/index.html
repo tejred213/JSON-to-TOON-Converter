@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JSON &harr; TOON Converter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <span class="eyebrow">toonlib &middot; flask</span>
+      <h1>JSON <span class="arrow">&harr;</span> TOON</h1>
+      <p class="subtitle">Convert between JSON and TOON (Token-Oriented Object Notation), an
+        indentation-based format designed to shrink token counts for LLM input.</p>
+    </header>
+
+    <main>
+      <div class="toolbar">
+        <button id="toToon" class="primary">JSON &rarr; TOON</button>
+        <button id="toJson">TOON &rarr; JSON</button>
+        <button id="swap" class="icon-btn" title="Swap panes">&#8646; Swap</button>
+        <button id="copy" class="icon-btn" title="Copy output">Copy output</button>
+        <span id="status"></span>
+      </div>
+
+      <div class="panes">
+        <section class="pane">
+          <div class="pane-head">
+            <label for="input">Input</label>
+            <span id="inputTag" class="pane-tag">json</span>
+          </div>
+          <textarea id="input" spellcheck="false" placeholder='{"name": "Ada", "tags": ["math", "computing"]}'></textarea>
+        </section>
+        <section class="pane">
+          <div class="pane-head">
+            <label for="output">Output</label>
+            <span id="outputTag" class="pane-tag toon">toon</span>
+          </div>
+          <textarea id="output" spellcheck="false" readonly placeholder="Converted output appears here"></textarea>
+        </section>
+      </div>
+
+      <div id="stats" class="stats hidden">
+        <div class="stat">
+          <span class="stat-label">JSON</span>
+          <span id="jsonTokens" class="stat-value">0</span>
+          <span class="stat-unit">tokens (~<span id="jsonChars">0</span> chars)</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">TOON</span>
+          <span id="toonTokens" class="stat-value">0</span>
+          <span class="stat-unit">tokens (~<span id="toonChars">0</span> chars)</span>
+        </div>
+        <div id="savings" class="stat savings">
+          <span class="stat-label">Savings</span>
+          <span id="savingsText" class="stat-value">&mdash;</span>
+          <div class="bar-track"><div id="savingsBar" class="bar-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

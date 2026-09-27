@@ -1,0 +1,14 @@
+[project]
+name = "json-toon-converter"
+version = "0.1.0"
+description = "Convert between JSON and TOON (Token-Oriented Object Notation)"
+requires-python = ">=3.9"
+dependencies = [
+    "flask>=3.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[tool.setuptools]
+packages = ["toonlib"]

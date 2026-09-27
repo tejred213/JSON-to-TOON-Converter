@@ -1,0 +1,140 @@
+{
+  "info": {
+    "name": "JSON <-> TOON Converter",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5050" }
+  ],
+  "item": [
+    {
+      "name": "Raw body (recommended)",
+      "item": [
+        {
+          "name": "JSON to TOON (raw JSON body)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const data = pm.response.json();",
+                  "",
+                  "const template = `",
+                  "<style>",
+                  "  body { font-family: 'SF Mono', Menlo, Consolas, monospace; background: #0f1115; color: #e6e8eb; padding: 16px; }",
+                  "  .toon { white-space: pre-wrap; background: #171a21; padding: 16px; border-radius: 8px; border: 1px solid #2a2e37; line-height: 1.6; font-size: 13px; }",
+                  "  .stats { margin-top: 14px; font-family: -apple-system, sans-serif; font-size: 13px; color: #8a8f98; }",
+                  "  .stats b { color: #3ddc84; }",
+                  "</style>",
+                  "<div class='toon'>{{output}}</div>",
+                  "<div class='stats'>",
+                  "  JSON: {{stats.json_tokens}} tokens (~{{stats.json_chars}} chars) &rarr; TOON: {{stats.toon_tokens}} tokens (~{{stats.toon_chars}} chars)",
+                  "  &mdash; <b>{{stats.savings_pct}}% fewer tokens</b>",
+                  "</div>",
+                  "`;",
+                  "",
+                  "pm.visualizer.set(template, data);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"authentication\": {\n    \"authType\": \"Bearer\",\n    \"tokenType\": \"JWT\",\n    \"sessionToken\": \"sess_live_9f8e7d6c5b4a3a2b1c\",\n    \"twoFactorAuth\": {\n      \"verified\": true,\n      \"method\": \"TOTP\",\n      \"verificationId\": \"2fa_ver_88349102\"\n    }\n  }\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/convert/to-toon", "host": ["{{baseUrl}}"], "path": ["api", "convert", "to-toon"] }
+          }
+        },
+        {
+          "name": "TOON to JSON (raw TOON body)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const data = pm.response.json();",
+                  "data.outputText = JSON.stringify(data.output, null, 2);",
+                  "",
+                  "const template = `",
+                  "<style>",
+                  "  body { font-family: 'SF Mono', Menlo, Consolas, monospace; background: #0f1115; color: #e6e8eb; padding: 16px; }",
+                  "  .toon { white-space: pre-wrap; background: #171a21; padding: 16px; border-radius: 8px; border: 1px solid #2a2e37; line-height: 1.6; font-size: 13px; }",
+                  "  .stats { margin-top: 14px; font-family: -apple-system, sans-serif; font-size: 13px; color: #8a8f98; }",
+                  "  .stats b { color: #3ddc84; }",
+                  "</style>",
+                  "<div class='toon'>{{outputText}}</div>",
+                  "<div class='stats'>",
+                  "  JSON: {{stats.json_tokens}} tokens (~{{stats.json_chars}} chars) &rarr; TOON: {{stats.toon_tokens}} tokens (~{{stats.toon_chars}} chars)",
+                  "  &mdash; <b>{{stats.savings_pct}}% fewer tokens</b>",
+                  "</div>",
+                  "`;",
+                  "",
+                  "pm.visualizer.set(template, data);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "text/plain" }],
+            "body": {
+              "mode": "raw",
+              "raw": "authentication:\n  authType: Bearer\n  tokenType: JWT\n  sessionToken: sess_live_9f8e7d6c5b4a3a2b1c\n  twoFactorAuth:\n    verified: true\n    method: TOTP\n    verificationId: 2fa_ver_88349102"
+            },
+            "url": { "raw": "{{baseUrl}}/api/convert/to-json", "host": ["{{baseUrl}}"], "path": ["api", "convert", "to-json"] }
+          }
+        },
+        {
+          "name": "Invalid JSON (error case)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{not valid json}" },
+            "url": { "raw": "{{baseUrl}}/api/convert/to-toon", "host": ["{{baseUrl}}"], "path": ["api", "convert", "to-toon"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Wrapped body (used by the web UI)",
+      "item": [
+        {
+          "name": "JSON to TOON",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"input\": \"{\\\"users\\\":[{\\\"id\\\":1,\\\"name\\\":\\\"Ada\\\"},{\\\"id\\\":2,\\\"name\\\":\\\"Grace\\\"}],\\\"active\\\":true}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/to-toon", "host": ["{{baseUrl}}"], "path": ["api", "to-toon"] }
+          }
+        },
+        {
+          "name": "TOON to JSON",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"input\": \"users[2]{id,name}:\\n  1,Ada\\n  2,Grace\\nactive: true\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/to-json", "host": ["{{baseUrl}}"], "path": ["api", "to-json"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Home page",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/", "host": ["{{baseUrl}}"], "path": [""] }
+      }
+    }
+  ]
+}
